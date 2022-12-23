@@ -84,25 +84,18 @@ for x in range(1, filas+1):
 
         # ------------ obtener observacion ---------------------------
         if y == 14:
-
             bandeja = driver.find_element(
                 by="xpath", value='/html/body/form/div[4]/div[4]/table[1]/tbody/tr[10]/td/table/tbody/tr/td/div/div/div/table/tbody/tr['+str(x)+']/td[14]').text
-            print(bandeja)
             if bandeja == "PENDIENTE DE RE...":
                 datos[len(datos)-1] = "PENDIENTE DE RELEVAMIENTO"
-                print(datos[len(datos)-1])
             if bandeja == "PENDIENTE DE DI...":
                 datos[len(datos)-1] = "PENDIENTE DE DISEÑO DE RED"
-                print(datos[len(datos)-1])
             if bandeja == "PLANIFICACION D...":
                 datos[len(datos)-1] = "PLANIFICACION DE TAREAS"
-                print(datos[len(datos)-1])
             if bandeja == "EN CERTIFICACIO...":
                 datos[len(datos)-1] = "EN CERTIFICACION"
-                print(datos[len(datos)-1])
             if bandeja == "ANALISIS DE FAC...":
                 datos[len(datos)-1] = "ANALISIS DE FACTIBILIDAD"
-                print(datos[len(datos)-1])
 
             obs = driver.find_element(
                 by="xpath", value='/html/body/form/div[4]/div[4]/table[1]/tbody/tr[10]/td/table/tbody/tr/td/div/div/div/table/tbody/tr['+str(x)+']/td[14]/a')
@@ -167,6 +160,21 @@ for x in range(1, filas+1):
         # ------------ nulo ---------------------------
         if y == 12:
             datos.append(" ")
+
+        # ------------ nulo ---------------------------
+        if y == 13:
+            bandeja = driver.find_element(
+                by="xpath", value='/html/body/form/div[4]/div[4]/table[1]/tbody/tr[10]/td/table/tbody/tr/td/div/div/div/table/tbody/tr['+str(x)+']/td[13]').text
+            if bandeja == "PENDIENTE DE RE...":
+                datos[len(datos)-1] = "PENDIENTE DE RELEVAMIENTO"
+            if bandeja == "PENDIENTE DE DI...":
+                datos[len(datos)-1] = "PENDIENTE DE DISEÑO DE RED"
+            if bandeja == "PLANIFICACION D...":
+                datos[len(datos)-1] = "PLANIFICACION DE TAREAS"
+            if bandeja == "EN CERTIFICACIO...":
+                datos[len(datos)-1] = "EN CERTIFICACION"
+            if bandeja == "ANALISIS DE FAC...":
+                datos[len(datos)-1] = "ANALISIS DE FACTIBILIDAD"
 
         # ------------ Observacion ---------------------------
         if y == 14:
