@@ -21,6 +21,7 @@ path = "/chromedriver.exe"
 Service = Service(executable_path=path)
 driver = webdriver.Chrome(service=Service)
 # driver.maximize_window()
+driver.minimize_window()
 driver.get("http://jvelazquez:Nacho123-@crm.telecentro.local/MembersLogin.aspx")
 time.sleep(1)
 
@@ -43,6 +44,10 @@ driver.find_element(
 
 time.sleep(3)
 
+tabla = driver.find_element(
+    by="xpath", value='/html/body/form/div[4]/div[4]/table[1]/tbody/tr[10]/td/table/tbody/tr/td/div/div/div/table/tbody').text
+
+
 filas = len(driver.find_elements(
     by="xpath", value='//*[@id="ctl00_ContentBody_grGestionTecEdificio"]/div/table/tbody/tr'))
 
@@ -53,6 +58,7 @@ filasTotal = filas
 
 datos = []
 for x in range(1, filas+1):
+    print("|")
     for y in range(1, columnas+1):
         dato = driver.find_element(
             by="xpath", value='//*[@id="ctl00_ContentBody_grGestionTecEdificio"]/div/table/tbody/tr['+str(x)+"]/td["+str(y)+"]").text
@@ -78,12 +84,33 @@ for x in range(1, filas+1):
 
         # ------------ obtener observacion ---------------------------
         if y == 14:
+
+            bandeja = driver.find_element(
+                by="xpath", value='/html/body/form/div[4]/div[4]/table[1]/tbody/tr[10]/td/table/tbody/tr/td/div/div/div/table/tbody/tr['+str(x)+']/td[14]').text
+            print(bandeja)
+            if bandeja == "PENDIENTE DE RE...":
+                datos[len(datos)-1] = "PENDIENTE DE RELEVAMIENTO"
+                print(datos[len(datos)-1])
+            if bandeja == "PENDIENTE DE DI...":
+                datos[len(datos)-1] = "PENDIENTE DE DISEÑO DE RED"
+                print(datos[len(datos)-1])
+            if bandeja == "PLANIFICACION D...":
+                datos[len(datos)-1] = "PLANIFICACION DE TAREAS"
+                print(datos[len(datos)-1])
+            if bandeja == "EN CERTIFICACIO...":
+                datos[len(datos)-1] = "EN CERTIFICACION"
+                print(datos[len(datos)-1])
+            if bandeja == "ANALISIS DE FAC...":
+                datos[len(datos)-1] = "ANALISIS DE FACTIBILIDAD"
+                print(datos[len(datos)-1])
+
             obs = driver.find_element(
                 by="xpath", value='/html/body/form/div[4]/div[4]/table[1]/tbody/tr[10]/td/table/tbody/tr/td/div/div/div/table/tbody/tr['+str(x)+']/td[14]/a')
             cadena = obs.get_attribute('onmouseover')[13:]
             comilla = cadena.index("'")
             cadena = cadena[:comilla]
             datos.append(cadena)
+            print("-")
 
         # ------------ Cambiar el Nodo GPON ---------------------------
         if y == 15:
@@ -101,12 +128,10 @@ for x in range(1, filas+1):
 driver.get(
     "http://crm.telecentro.local/Edificio/Gt_Edificio/BandejaEntradaDeRelevamiento.aspx?TituloPantalla=CIERRE%20DE%20RELEVAMIENTO&EstadoGestionId=303&TipoGestionId=6&TipoGestion=RECONVERSION%20TECNOLOGICA%20-%20CIERRE%20DE%20RELEVAMIENTO")
 
-time.sleep(5)
+# time.sleep(5)
+#driver.find_element(by="xpath", value='//*[@id="btnBuscar"]').send_keys(Keys.RETURN)
 
-driver.find_element(
-    by="xpath", value='//*[@id="btnBuscar"]').send_keys(Keys.RETURN)
-
-time.sleep(3)
+time.sleep(2)
 
 filas = len(driver.find_elements(
     by="xpath", value='//*[@id="ctl00_ContentBody_grGestionTecEdificio"]/div/table/tbody/tr'))
@@ -143,7 +168,7 @@ for x in range(1, filas+1):
         if y == 12:
             datos.append(" ")
 
-        # ------------ nulo ---------------------------
+        # ------------ Observacion ---------------------------
         if y == 14:
             obs = driver.find_element(
                 by="xpath", value='/html/body/form/div[4]/div[4]/table[1]/tbody/tr[10]/td/table/tbody/tr/td/div/div/div/table/tbody/tr['+str(x)+']/td[14]')
@@ -182,86 +207,22 @@ cliente = gspread.authorize(credenciales)
 
 hoja = cliente.open("AutocargaGestiones").sheet1
 
+hoja.clear()
+
 #hoja.update_cell(1, 2, 'Bingo!')
-#hoja.update("A4", Titulo)
 
 hoja.update([df.columns.values.tolist()] + df.values.tolist())
 
+#hoja.update("A100", tabla)
 
 # ---------------------------------------------------------------------------------
-
-
-driver.get("https://telecentro.fs.ocs.oraclecloud.com/mobility/")
-
-time.sleep(2)
-
-driver.find_element(
-    by="xpath", value='//*[@id="username"]').send_keys("Jvelazquez-ext")
-
-driver.find_element(
-    by="xpath", value='//*[@id="password"]').send_keys("123456")
-
-driver.find_element(
-    by="xpath", value='/html/body/div/div/div/div/form/div[2]/div[5]/button').send_keys(Keys.RETURN)
-
-time.sleep(15)
-
-
-driver.find_element(
-    by="xpath", value='//*[@id="manage-content"]/div/div[2]/div[2]/div/div[2]/div[3]/div[2]/div[2]/div[1]/div[1]/button[1]').click()
-
-time.sleep(1)
-
-driver.find_element(
-    by="xpath", value='//*[@id="manage-content"]/div/div[2]/div[2]/div/div[2]/div[3]/div[2]/div[2]/div[1]/div[2]/div[1]/div[1]').click()
-
-
-# ----------------------------------- Cuadro Emergente -------------------------------------------------------
-
-time.sleep(1)
-
-driver.find_element(
-    by="xpath", value='//button[@title["Vista"]]/span[3]').click()
-
-time.sleep(1)
-
-Select(driver.find_element(by="xpath",
-       value='/html/body/div[25]/div/div/div/div[1]/form/div/select[1]')).select_by_value("11")
-
-
-time.sleep(1)
-
-Select(driver.find_element(by="xpath",
-       value='/html/body/div[25]/div/div/div/div[1]/form/div/select[2]')).select_by_value("complete")
-
-
-time.sleep(1)
-
-driver.find_element(
-    by="xpath", value='/html/body/div[25]/div/div/div/div[1]/form/div/label[15]/input').click()
-
-time.sleep(1)
-
-driver.find_element(
-    by="xpath", value='/html/body/div[25]/div/div/div/div[2]//button[@title["Aplicar"]]/span[2]').click()
-
-
-#driver.find_element(by="xpath", value='//*[@id="elId231"]/div[1]/div[3]/controls:toolbar-items:toolbar-switcher/controls:app-menu-button/button').click()
-
-#driver.find_element(by="xpath", value='//*[@id="elId303"]').click()
-
-
-# -------------------------------------------------------
 
 
 input("Esperando que no se cierre webdriver: ")
 
 
 """
-time.sleep(1)
 
-driver.find_element(
-    by="xpath", value='//button[@title["Vista de lista"]]/span[1]').click()
 
 
 """
