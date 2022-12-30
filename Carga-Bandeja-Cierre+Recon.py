@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
+from bs4 import BeautifulSoup
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -21,7 +22,7 @@ path = "/chromedriver.exe"
 Service = Service(executable_path=path)
 driver = webdriver.Chrome(service=Service)
 # driver.maximize_window()
-driver.minimize_window()
+# driver.minimize_window()
 driver.get("http://jvelazquez:Nacho123-@crm.telecentro.local/MembersLogin.aspx")
 time.sleep(1)
 
@@ -189,12 +190,14 @@ for x in range(1, filas+1):
                 by="xpath", value='/html/body/form/div[4]/div[4]/table[1]/tbody/tr[10]/td/table/tbody/tr/td/div/div/div/table/tbody/tr['+str(x)+']/td[15]').text
             if nodoGpon != " ":
                 datos[len(datos) - 13] = nodoGpon
+            datos.append(" ")
+            datos.append(" ")
 
 
 serie = pd.Series(datos)
-df = pd.DataFrame(serie.values.reshape(filasTotal, columnas+2))
+df = pd.DataFrame(serie.values.reshape(filasTotal, 19))
 df.columns = ["N", "Gestion", "ID", "Nodo", "Zona", "Prioridad", "Direccion", "Localidad", "Subtipo", "Ult Visita",
-              "Estado Edificio", "Cant Gestiones", "Usuario", "Contratista", "Bandeja Previa", "Observacion", "Nodo Gpon"]
+              "Estado Edificio", "Cant Gestiones", "Usuario", "Contratista", "Bandeja Previa", "Observacion", "Nodo Gpon", "Dias Faltantes", "Dias Retraso"]
 
 
 # print(df)
